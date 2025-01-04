@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../axios';
 import AddFriendForm from './AddFriendForm';
 
+
 const Home = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();

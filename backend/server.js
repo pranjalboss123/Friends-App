@@ -3,15 +3,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const authRoutes = require('./routes/Auth');
 const app = express();
+app.use(express.json()); // Add this line to parse the request body
+app.use(express.urlencoded({ extended: true })); // Add this line to parse URL-encoded requests
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  credentials: true, // Allow cookies and credentials (if needed)
+}));
+const authRoutes = require('./routes/Auth');
 const friendRoutes = require('./routes/friends'); // Import friend routes
 
 app.use('/api/friends', friendRoutes); // All friend routes will be prefixed with /api/friends
 dotenv.config();
 app.use('/api/auth', authRoutes);
 app.use(express.json());
-app.use(cors());
+
 
 
 
