@@ -4,7 +4,7 @@ import AuthForm from './components/AuthForm';
 import AddFriendForm from './components/AddFriendForm';
 import Dashboard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
-import Home from './components/Home'; // Assume Home component is created
+import Home from './components/Home'; 
 
 function App() {
   return (

@@ -50,9 +50,9 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-3xl font-semibold text-center">
+    <div className="min-h-screen flex w-screen justify-center items-center bg-gray-50 p-6">
+      <div className="max-w-4xl max-h-fit mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-3xl font-semibold text-red-600 text-center">
           {user ? `Welcome, ${user.username}` : 'Welcome, Guest'}
         </h2>
         {user ? (
@@ -117,14 +117,14 @@ const Home = () => {
 
           </div>
         ) : (
-          <div className="text-center mt-6">
+          <div className="text-center flex flex-col items-center justify-center mt-6">
             <button 
               onClick={() => navigate('/login')} 
               className="py-2 px-4 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 transition duration-200"
             >
               Login to Continue
             </button>
-            <p className="mt-4">Don't have an account? <a href="/signup" className="text-blue-500">Sign Up</a></p>
+            <p className="mt-4 text-red-600">Don't have an account? <a href="/signup" className="text-blue-500">Sign Up</a></p>
           </div>
         )}
       </div>
