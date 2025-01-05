@@ -7,6 +7,29 @@ const app = express();
 app.use(express.json()); // Add this line to parse the request body
 app.use(express.urlencoded({ extended: true })); // Add this line to parse URL-encoded requests
 
+const userRoutes = require('./routes/users');
+const friendRequestRoutes = require('./routes/friend-requests');
+
+
+
+app.use('/api/users', userRoutes);
+app.use('/api/friend-requests', friendRequestRoutes);
+
+// ... (rest of the existing code remains the same)
+
+app.get('/api/users/search', async (req, res) => {
+  const searchQuery = req.query.username;
+  const users = await User.find({ username: { $regex: searchQuery, $options: 'i' } });
+  res.json(users);
+});
+
+app.post('/api/friend-requests', async (req, res) => {
+  const { senderId, recipientId } = req.body;
+  const newRequest = new FriendRequest({ senderId, recipientId, status: 'pending' });
+  await newRequest.save();
+  res.json({ success: true, message: 'Friend request sent!' });
+});
+
 app.use(cors({
   origin: 'http://localhost:5173', // Allow requests from this origin
   credentials: true, // Allow cookies and credentials (if needed)
@@ -32,6 +55,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.get('/', (req, res) => {
     res.send("Backend is running...");
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

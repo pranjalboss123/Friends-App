@@ -8,18 +8,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUser(token); // Store the token or user data after login
+    const user = localStorage.getItem('user');
+    if (user) {
+      const parsedUser  = JSON.parse(user);
+      setUser(parsedUser );
+      console.log(parsedUser );
+      console.log('user:', parsedUser .username);
+    } else {
+      console.error('Error fetching user data:');
     }
   }, []);
 
   const login = async (username, password) => {
     try {
       const response = await axios.post('/auth/login', { username, password });
-      const { token } = response.data;
+      const { token, user } = response.data;
       localStorage.setItem('token', token); // Save token to localStorage
-      setUser(token); // Update the user state
+      // localStorage.setItem('user', user); // Save user to localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user); // Update the user state
     } catch (error) {
       console.error('Login failed', error);
     }
@@ -35,6 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
