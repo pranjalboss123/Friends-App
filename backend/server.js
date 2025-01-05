@@ -6,7 +6,26 @@ const cors = require('cors');
 const app = express();
 app.use(express.json()); // Add this line to parse the request body
 app.use(express.urlencoded({ extended: true })); // Add this line to parse URL-encoded requests
+const passport = require('passport');
+require('dotenv').config();
 
+const jwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const User = require('./models/User');
+passport.use(new jwtStrategy({
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET || 'your-secret-key',
+}, (payload, done) => {
+  User.findById(payload.userId).then((user) => {
+    if (!user) {
+      return done(null, false);
+    }
+    return done(null, user);
+  }).catch((error) => {
+    return done(error, false);
+  });
+}));
+app.use(cors());
 const userRoutes = require('./routes/users');
 const friendRequestRoutes = require('./routes/friend-requests');
 

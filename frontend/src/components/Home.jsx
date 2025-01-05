@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../axios';
 import AddFriendForm from './AddFriendForm';
 
+// Now this task is done, and I suppose, after sending the ad friend, when the username logs into the same account she should be able to see the friend request option. But as the current interface of home jsx component, I dont see an option available to view the friend request. And as there are many unused components left, like dashboard, etc, use some of those dashboards to integrate with the home jsx in the simplified way that not the existing home jsex do not get disturbed by keeping the structure as it is just adding the new feature and component in the home. Jsx component to display the friend requests and also provide the option of accepting and rejecting those friend requests. And there should be an option where it will show the users sent friend invites and where they will be able to cheque the status of whether they are friend request is accepted or not
+
 const Home = () => {
   const token = localStorage.getItem('token');
   const { user, logout } = useContext(AuthContext);
@@ -29,21 +31,29 @@ const Home = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`/api/users/search?username=${searchQuery}`);
+      const response = await axios.get('/users/search', {
+        params: {
+          username: searchQuery,
+        },
+      });
       setSearchResults(response.data);
     } catch (error) {
       console.error('Error searching users:', error);
     }
   };
-
-  const handleAddFriend = (username) => {
-    axios.post('/friends/add', { username })
-      .then(response => {
-        setMessage(response.data.message);
-      })
-      .catch(err => {
-        setMessage('Error adding friend');
+  const handleAddFriend = async (username) => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log(token); // Log the token variable
+      const response = await axios.post('/friends/add', { username }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage('Error adding friend');
+    }
   };
 
   return (
@@ -112,11 +122,11 @@ const Home = () => {
                   Search
                 </button>
               </div>
-              <ul className="space-y-2">
+              <ul>
                 {searchResults.length > 0 ? (
                   searchResults.map((user) => (
-                    <li key={user.id} className="flex justify-between items-center p-4 bg-white bg-opacity-30 rounded-lg">
-                      <span className="text-white font-medium">{user.username}</span>
+                    <li key={user._id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">{user.username}</span>
                       <button
                         onClick={() => handleAddFriend(user.username)}
                         className="py-1 px-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200"
@@ -126,9 +136,10 @@ const Home = () => {
                     </li>
                   ))
                 ) : (
-                  <p className="text-white">No results found.</p>
+                  <p className="text-gray-600">No results found.</p>
                 )}
               </ul>
+              
             </div>
           </div>
         ) : (
